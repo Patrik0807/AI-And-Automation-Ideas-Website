@@ -36,8 +36,8 @@ const statCards = [
     ring:     'border-amber-100',
   },
   {
-    key:      'Validation',
-    label:    'Validation',
+    key:      'In Validation',
+    label:    'In Validation',
     icon:     Clock,
     iconColor: '#8B5CF6', // purple-500
     bg:       'bg-purple-50',

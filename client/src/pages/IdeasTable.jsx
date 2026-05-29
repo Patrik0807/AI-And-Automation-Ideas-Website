@@ -21,7 +21,7 @@ const STATUS_COLORS = {
   'Submitted':          'bg-amber-50 text-amber-600 border-amber-100',
   'Approved':           'bg-emerald-50 text-emerald-600 border-emerald-100',
   'In Progress':        'bg-blue-50 text-blue-600 border-blue-100',
-  'Validation':         'bg-purple-50 text-purple-600 border-purple-100',
+  'In Validation':      'bg-purple-50 text-purple-600 border-purple-100',
   'Implemented':        'bg-slate-50 text-slate-500 border-slate-200',
   'Rejected':           'bg-rose-50 text-rose-600 border-rose-100',
 };

@@ -1,6 +1,6 @@
 /**
  * StatusBadge — valid statuses:
- * 'Submitted' | 'Approved' | 'In Progress' | 'Testing/Validating' | 'Implemented' | 'Rejected'
+ * 'Submitted' | 'Approved' | 'In Progress' | 'In Validation' | 'Implemented' | 'Rejected'
  */
 const statusConfig = {
   Submitted: {
@@ -21,7 +21,7 @@ const statusConfig = {
     border: 'border-amber-200',
     dot:    'bg-amber-500',
   },
-  'Validation': {
+  'In Validation': {
     bg:     'bg-purple-50',
     text:   'text-purple-700',
     border: 'border-purple-200',

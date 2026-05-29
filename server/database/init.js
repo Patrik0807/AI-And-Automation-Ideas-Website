@@ -148,7 +148,7 @@ db.serialize(() => {
       db.run("UPDATE team_members SET type = 'Group Leader' WHERE type IN ('team_leader', 'group_leader', 'Group Leader')");
 
       // Idea Status Migration
-      db.run("UPDATE ideas SET status = 'Validation' WHERE status IN ('Testing/Validating', 'Validation Phase')");
+      db.run("UPDATE ideas SET status = 'In Validation' WHERE status IN ('Testing/Validating', 'Validation Phase', 'Validation')");
     }
   });
 });

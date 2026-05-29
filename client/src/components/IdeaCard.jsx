@@ -15,6 +15,7 @@ const categoryColors = {
   'ASRS':                { bg: 'bg-violet-50', text: 'text-violet-600', border: 'border-l-violet-500' },
   'Integration':         { bg: 'bg-cyan-50', text: 'text-cyan-600', border: 'border-l-cyan-500' },
   'IT Delivery':{ bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-l-indigo-500' },
+  'Installation':        { bg: 'bg-teal-50', text: 'text-teal-600', border: 'border-l-teal-500' },
   'Test and Deployment': { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-l-amber-500' },
   'Other':               { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-l-gray-400' }
 };
@@ -40,24 +41,17 @@ export default function IdeaCard({ idea, index }) {
       
       {/* Header: Top Section */}
       <div className="flex items-start justify-between mb-6 relative z-10 w-full">
-        {displayImage ? (
-          <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 border border-gray-200 shadow-sm bg-gray-50">
-            <img 
-              src={displayImage} 
-              alt="Idea thumbnail" 
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = 'https://placehold.co/400x400/f8fafc/64748b?text=Image+Unavailable';
-              }}
-            />
-          </div>
-        ) : (
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border 
-            ${catConfig.bg} ${catConfig.border} shadow-inner`}>
-            <Lightbulb className={`w-7 h-7 ${catConfig.text}`} />
-          </div>
-        )}
+        <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 border border-gray-200 shadow-sm bg-gray-50">
+          <img 
+            src={displayImage || "/automation_illustration.png"} 
+            alt="Idea thumbnail" 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/automation_illustration.png";
+            }}
+          />
+        </div>
         <div className="flex flex-col items-end gap-2.5">
           <StatusBadge status={idea.status} />
           {(idea.classification || 'Automation') && (

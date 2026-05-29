@@ -16,7 +16,7 @@ import IdeaForm, { isImage } from '../components/IdeaForm';
 
 /** Valid idea statuses (includes new Validation Phase stage) */
 const allStatuses = [
-  'Submitted', 'Approved', 'In Progress', 'Validation', 'Implemented', 'Rejected',
+  'Submitted', 'Approved', 'In Progress', 'In Validation', 'Implemented', 'Rejected',
 ];
 
 /** Pipeline stage icons */
@@ -24,7 +24,7 @@ const STAGE_ICONS = {
   'Submitted':          FileText,
   'Approved':           CheckCircle2,
   'In Progress':        Clock,
-  'Validation':         FlaskConical,
+  'In Validation':      FlaskConical,
   'Implemented':        TrendingUp,
   'Rejected':           XIcon,
 };

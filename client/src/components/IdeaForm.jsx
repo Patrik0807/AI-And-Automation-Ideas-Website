@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/ideas';
 
-const categories = ['Project engineering', 'Sales engineering', 'ASRS', 'Integration', 'IT Delivery', 'Test and Deployment', 'Other'];
+const categories = ['Project engineering', 'Sales engineering', 'ASRS', 'Integration', 'IT Delivery', 'Installation', 'Test and Deployment', 'Other'];
 
 // Helper to determine if a URL/file is an image
 export const isImage = (fileName) => {
