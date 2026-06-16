@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 
 const categories = ['All', 'Project engineering', 'Sales engineering', 'ASRS', 'Integration', 'IT Delivery', 'Installation', 'Test and Deployment', 'Other'];
-const statuses   = ['All', 'Submitted', 'Approved', 'In Progress', 'In Validation', 'Implemented'];
+const classifications = ['All', 'AI', 'Automation'];
 
 export default function FilterBar({ filters, setFilters }) {
   const handleChange = (key, value) => {
@@ -38,16 +38,16 @@ export default function FilterBar({ filters, setFilters }) {
           </select>
         </div>
 
-        {/* Status Filter */}
-        <div className="relative sm:w-48">
+        {/* Idea Type / Classification Filter — replaces old Status filter */}
+        <div className="relative sm:w-44">
           <select
-            value={filters.status}
-            onChange={(e) => handleChange('status', e.target.value)}
+            value={filters.classification}
+            onChange={(e) => handleChange('classification', e.target.value)}
             className="select-field"
           >
-            {statuses.map((s) => (
-              <option key={s} value={s}>
-                {s === 'All' ? 'All Statuses' : s}
+            {classifications.map((c) => (
+              <option key={c} value={c}>
+                {c === 'All' ? 'All Types' : c}
               </option>
             ))}
           </select>

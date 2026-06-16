@@ -19,16 +19,7 @@ import {
 } from 'lucide-react';
 
 
-/* ─── Toyota Logo SVG (inline, no external dep) ─────────────── */
-// function ToyotaLogo({ className = 'w-8 h-8' }) {
-//   return (
-//     <svg viewBox="0 0 100 60" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-//       <ellipse cx="50" cy="30" rx="48" ry="28" stroke="#EB0A1E" strokeWidth="5.5" fill="none" />
-//       <ellipse cx="50" cy="30" rx="20" ry="28" stroke="#EB0A1E" strokeWidth="5.5" fill="none" />
-//       <ellipse cx="50" cy="14" rx="30" ry="10" stroke="#EB0A1E" strokeWidth="5.5" fill="none" />
-//     </svg>
-//   );
-// }
+
 function ToyotaLogo({ className = '' }) {
   return (
     <img
@@ -98,7 +89,6 @@ export default function Navbar() {
             </div> */}
           </Link>
 
-          {/* ── Desktop Nav Links ── */}
           <div className="hidden md:flex items-center gap-3 ml-12 flex-1">
             {NAV_LINKS.map(({ to, label, icon: Icon }) => (
               <Link
@@ -194,7 +184,7 @@ export default function Navbar() {
                   Log In
                 </Link>
                 <Link
-                  to="/ideas" state={{ openForm: true }}
+                  to="/?openForm=true"
                   className="flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white text-[15px] font-bold px-6 py-2.5 rounded-xl transition-all shadow-md active:scale-95 border-2 border-primary-400"
                 >
                   Get Started <ArrowRight className="w-4 h-4" />

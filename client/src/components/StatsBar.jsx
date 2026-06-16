@@ -53,7 +53,7 @@ const statCards = [
   },
 ];
 
-export default function StatsBar({ stats, onFilterSelect }) {
+export default function StatsBar({ stats, onFilterSelect, activeStatus = 'All' }) {
   const getCount = (key) => {
     if (key === 'total') return stats?.total ?? 0;
     const found = stats?.byStatus?.find((s) => s._id === key);
@@ -70,6 +70,7 @@ export default function StatsBar({ stats, onFilterSelect }) {
       {statCards.map((card, index) => {
         const Icon  = card.icon;
         const count = getCount(card.key);
+        const isActive = activeStatus === card.key || (card.key === 'total' && activeStatus === 'All');
 
         return (
           <motion.div
@@ -78,8 +79,9 @@ export default function StatsBar({ stats, onFilterSelect }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.08, duration: 0.4 }}
             onClick={() => handleClick(card.key)}
-            className={`relative overflow-hidden bg-white rounded-2xl p-5 shadow-sm border ${card.ring}
-                       hover:shadow-md hover:border-gray-300 transition-all duration-300 group cursor-pointer active:scale-95`}
+            className={`relative overflow-hidden bg-white rounded-2xl p-5 shadow-sm border-2 transition-all duration-300 group cursor-pointer active:scale-95
+                       ${isActive ? 'shadow-md scale-[1.02]' : 'hover:shadow-md hover:border-gray-300'} ${card.ring}`}
+            style={isActive ? { borderColor: card.iconColor } : {}}
           >
             {/* Decorative top-right blob */}
             <div

@@ -62,7 +62,7 @@ function parsePipeline(pipelineJson, currentStatus, submissionDate) {
 
 // GET /api/ideas
 const getIdeas = (req, res) => {
-  const { status, category, search } = req.query;
+  const { status, category, search, classification } = req.query;
   let query = 'SELECT * FROM ideas';
   let params = [];
   let conditions = [];
@@ -74,6 +74,10 @@ const getIdeas = (req, res) => {
   if (category && category !== 'All') {
     conditions.push('category = ?');
     params.push(category);
+  }
+  if (classification && classification !== 'All') {
+    conditions.push('LOWER(classification) = LOWER(?)');
+    params.push(classification);
   }
   if (search) {
     conditions.push('(title LIKE ? OR description LIKE ? OR problemStatement LIKE ?)');
@@ -556,50 +560,64 @@ const deleteIdea = async (req, res) => {
 // @desc    Get summary stats
 // GET /api/ideas/stats/summary
 const getStats = (req, res) => {
-  db.get('SELECT COUNT(*) as total FROM ideas', [], (err, totalRow) => {
+  const { category, search, classification } = req.query;
+  let params = [];
+  let conditions = [];
+
+  if (category && category !== 'All') {
+    conditions.push('category = ?');
+    params.push(category);
+  }
+  if (classification && classification !== 'All') {
+    conditions.push('LOWER(classification) = LOWER(?)');
+    params.push(classification);
+  }
+  if (search) {
+    conditions.push('(title LIKE ? OR description LIKE ? OR problemStatement LIKE ?)');
+    params.push(`%${search}%`);
+    params.push(`%${search}%`);
+    params.push(`%${search}%`);
+  }
+
+  const whereClause = conditions.length > 0 ? ' WHERE ' + conditions.join(' AND ') : '';
+
+  const queryTotal = `SELECT COUNT(*) as total FROM ideas${whereClause}`;
+  const queryByStatus = `SELECT status as _id, COUNT(*) as count FROM ideas${whereClause} GROUP BY status`;
+  const queryByCategory = `SELECT category as _id, COUNT(*) as count FROM ideas${whereClause} GROUP BY category`;
+  const queryImpact = `SELECT SUM(hoursSaved) as totalHours, SUM(costSaved) as totalCost FROM ideas${whereClause}`;
+
+  db.get(queryTotal, params, (err, totalRow) => {
     if (err) {
       return res.status(500).json({ message: err.message });
     }
 
-    db.all(
-      'SELECT status as _id, COUNT(*) as count FROM ideas GROUP BY status',
-      [],
-      (err, byStatus) => {
+    db.all(queryByStatus, params, (err, byStatus) => {
+      if (err) {
+        return res.status(500).json({ message: err.message });
+      }
+
+      db.all(queryByCategory, params, (err, byCategory) => {
         if (err) {
           return res.status(500).json({ message: err.message });
         }
 
-        db.all(
-          'SELECT category as _id, COUNT(*) as count FROM ideas GROUP BY category',
-          [],
-          (err, byCategory) => {
-            if (err) {
-              return res.status(500).json({ message: err.message });
-            }
-
-            db.get(
-              'SELECT SUM(hoursSaved) as totalHours, SUM(costSaved) as totalCost FROM ideas',
-              [],
-              (err, impactRow) => {
-                if (err) {
-                  return res.status(500).json({ message: err.message });
-                }
-
-                res.json({
-                  total: totalRow.total,
-                  byStatus,
-                  byCategory,
-                  impact: {
-                    totalHours: impactRow.totalHours || 0,
-                    totalCost: impactRow.totalCost || 0
-                  }
-                });
-              }
-            );
+        db.get(queryImpact, params, (err, impactRow) => {
+          if (err) {
+            return res.status(500).json({ message: err.message });
           }
-        );
-      }
-    );
+
+          res.json({
+            total: totalRow?.total || 0,
+            byStatus,
+            byCategory,
+            impact: {
+              totalHours: impactRow?.totalHours || 0,
+              totalCost: impactRow?.totalCost || 0
+            }
+          });
+        });
+      });
+    });
   });
 };
 

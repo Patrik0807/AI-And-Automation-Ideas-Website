@@ -18,7 +18,8 @@ import ActionPoints from './pages/ActionPoints';
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <LoadingScreen />;
-  return !user ? children : <Navigate to="/ideas" replace />;
+  if (!user) return children;
+  return user.role === 'admin' ? <Navigate to="/ideas" replace /> : <Navigate to="/" replace />;
 }
 
 /** Allows both guest and authenticated users */
@@ -35,12 +36,12 @@ function ProtectedRoute({ children }) {
   return user ? children : <Navigate to="/login" replace />;
 }
 
-/** Blocks non-admin users — redirects admins-only pages */
+/** Blocks non-admin users — redirects to home page */
 function AdminRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== 'admin') return <Navigate to="/ideas" replace />;
+  if (user.role !== 'admin') return <Navigate to="/" replace />;
   return children;
 }
 
@@ -94,12 +95,13 @@ export default function App() {
               <PublicRoute><Login /></PublicRoute>
             } />
 
-            <Route path="/ideas" element={<BaseRoute><Ideas /></BaseRoute>} />
-            <Route path="/ideas/:id" element={<BaseRoute><IdeaDetail /></BaseRoute>} />
-            <Route path="/ideas-table" element={<BaseRoute><IdeasTable /></BaseRoute>} />
-            <Route path="/insights" element={<BaseRoute><Insights /></BaseRoute>} />
-            <Route path="/voice-ideas" element={<BaseRoute><VoiceIdeas /></BaseRoute>} />
-            <Route path="/team-structure" element={<BaseRoute><TeamStructure  /></BaseRoute>} />
+            {/* ── Admin-only Internal Routes ───────────────────── */}
+            <Route path="/ideas" element={<AdminRoute><Ideas /></AdminRoute>} />
+            <Route path="/ideas/:id" element={<AdminRoute><IdeaDetail /></AdminRoute>} />
+            <Route path="/ideas-table" element={<AdminRoute><IdeasTable /></AdminRoute>} />
+            <Route path="/insights" element={<AdminRoute><Insights /></AdminRoute>} />
+            <Route path="/voice-ideas" element={<AdminRoute><VoiceIdeas /></AdminRoute>} />
+            <Route path="/team-structure" element={<AdminRoute><TeamStructure /></AdminRoute>} />
 
             {/* ── Admin-only Routes ─────────────────────────────── */}
             <Route

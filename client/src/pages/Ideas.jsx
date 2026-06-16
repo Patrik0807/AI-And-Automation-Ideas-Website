@@ -17,6 +17,7 @@ export default function Ideas() {
   const [filters, setFilters] = useState({
     search: '',
     category: 'All',
+    classification: 'All',
     status: 'All'
   });
 
@@ -34,12 +35,17 @@ export default function Ideas() {
       setLoading(true);
       const params = {};
       if (filters.category !== 'All') params.category = filters.category;
-      if (filters.status !== 'All') params.status = filters.status;
+      if (filters.classification !== 'All') params.classification = filters.classification;
+      if (filters.status && filters.status !== 'All') params.status = filters.status;
       if (filters.search) params.search = filters.search;
+
+      // Stats should reflect category, classification, and search filters, but NOT the clicked status card itself.
+      const statsParams = { ...params };
+      delete statsParams.status;
 
       const [ideasRes, statsRes] = await Promise.all([
         API.getIdeas(params),
-        API.getStats()
+        API.getStats(statsParams)
       ]);
       setIdeas(ideasRes.data);
       setStats(statsRes.data);
@@ -105,6 +111,7 @@ export default function Ideas() {
         <div className="mb-8">
           <StatsBar 
             stats={stats} 
+            activeStatus={filters.status}
             onFilterSelect={(status) => setFilters(prev => ({ ...prev, status }))}
           />
         </div>
@@ -127,19 +134,19 @@ export default function Ideas() {
             className="text-center py-24 bg-white rounded-[2.5rem] border-2 border-dashed border-gray-200"
           >
             <div className="bg-primary-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-              {filters.search || filters.category !== 'All' || filters.status !== 'All' ? (
+              {filters.search || filters.category !== 'All' || filters.classification !== 'All' ? (
                 <Search className="w-8 h-8 text-primary-400" />
               ) : (
                 <Lightbulb className="w-8 h-8 text-primary-400" />
               )}
             </div>
             <h3 className="text-2xl font-black text-slate-800 mb-2 tracking-tight">
-              {filters.search || filters.category !== 'All' || filters.status !== 'All'
+              {filters.search || filters.category !== 'All' || filters.classification !== 'All'
                 ? 'No matches found'
                 : 'No ideas yet'}
             </h3>
             <p className="text-slate-500 font-bold max-w-xs mx-auto leading-relaxed">
-              {filters.search || filters.category !== 'All' || filters.status !== 'All'
+              {filters.search || filters.category !== 'All' || filters.classification !== 'All'
                 ? 'Try adjusting your search or category filters.'
                 : 'Be the first to submit a high-impact automation idea for the facility.'}
             </p>

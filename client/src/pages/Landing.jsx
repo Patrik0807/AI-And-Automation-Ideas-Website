@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useRef, useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import {
   ArrowRight,
@@ -15,6 +15,7 @@ import {
   GitMerge,
   ChevronDown
 } from 'lucide-react';
+import IdeaForm from '../components/IdeaForm';
 
 /* ─── Toyota Logo SVG ─────────────────────────────────────────── */
 function ToyotaLogo({ className = 'w-10 h-10', color = '#EB0A1E' }) {
@@ -55,14 +56,21 @@ function SectionLabel({ text }) {
 }
 
 export default function Landing() {
+  const [showForm, setShowForm] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const handleCTA = (path) => {
-    if (path === '/ideas/new') {
-      navigate('/ideas', { state: { openForm: true } });
-    } else {
-      navigate('/ideas');
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (location.state?.openForm || params.get('openForm') === 'true') {
+      setShowForm(true);
+      // Clean up the URL and state so it doesn't re-open on refresh
+      navigate('.', { replace: true, state: {} });
     }
+  }, [location, navigate]);
+
+  const handleIdeaCreated = () => {
+    // Form closes itself via onClose; nothing extra needed on Landing
   };
 
   /* ── WHY cards data ─────────────────────────────────────────── */
@@ -173,22 +181,13 @@ export default function Landing() {
               A premium internal platform designed to capture and track AI and automation ideas from the warehouse domain, transforming raw concepts into measurable business value.
             </p>
 
-            {/* CTAs */}
+            {/* CTAs — only Submit Idea shown; Explore Insights removed */}
             <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => handleCTA('/ideas')}
-                className="flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600
-                           text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-primary-500/25
-                           hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-base border-2 border-primary-400"
+                onClick={() => setShowForm(true)}
+                className="inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold px-10 py-4 rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/25 active:scale-95 text-base border-2 border-primary-400"
               >
-                Explore Insights <ArrowRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleCTA('/ideas/new')}
-                className="inline-flex items-center justify-center gap-2 bg-slate-900 text-white font-bold px-10 py-4 rounded-xl
-                          hover:bg-slate-800 transition-colors shadow-lg active:scale-95 text-base"
-              >
-                Submit an Idea
+                Submit Idea <ArrowRight className="w-5 h-5" />
               </button>
             </div>
           </motion.div>
@@ -293,27 +292,13 @@ export default function Landing() {
             <h2 className="text-4xl font-black text-slate-900 mb-6">
               Ready to submit a new idea?
             </h2>
-            {/* <p className="text-slate-500 text-lg mb-10 mx-auto font-medium">
-              Join the platform today and help us automate our logistics.
-            </p> */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* <button
-                onClick={() => handleCTA('/register')}
-                className="inline-flex items-center justify-center gap-2 bg-slate-900 text-white font-bold px-10 py-4 rounded-xl
-                          hover:bg-slate-800 transition-colors shadow-lg active:scale-95 text-base"
+              <button
+                onClick={() => setShowForm(true)}
+                className="inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold px-10 py-4 rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/25 active:scale-95 text-base border-2 border-primary-400"
               >
-                Create Account
-              </button> */}
-              {/* <button
-                onClick={() => handleCTA('/login')}
-                className="inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold px-10 py-4 rounded-xl
-                          hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/25 active:scale-95 text-base border-2 border-primary-400"
-              >
-                Log In <ArrowRight className="w-5 h-5" />
-              </button> */}
-              <Link to="/ideas" state={{ openForm: true }} className="inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold px-10 py-4 rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/25 active:scale-95 text-base border-2 border-primary-400">
                 Submit Idea <ArrowRight className="w-5 h-5" />
-              </Link>
+              </button>
             </div>
           </FadeSection>
         </div>
@@ -331,8 +316,12 @@ export default function Landing() {
             </div>
 
             <div className="flex gap-6 text-sm font-semibold text-slate-500">
-              <Link to="/ideas" className="hover:text-primary-600 transition-colors">Dashboard</Link>
-              <Link to="/ideas" className="hover:text-primary-600 transition-colors">Submit Idea</Link>
+              <button
+                onClick={() => setShowForm(true)}
+                className="hover:text-primary-600 transition-colors"
+              >
+                Submit Idea
+              </button>
               <Link to="/login" className="hover:text-primary-600 transition-colors">Admin Login</Link>
             </div>
 
@@ -342,6 +331,13 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+
+      {/* IdeaForm Modal — rendered directly on Landing page */}
+      <IdeaForm
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        onCreated={handleIdeaCreated}
+      />
     </div>
   );
 }
