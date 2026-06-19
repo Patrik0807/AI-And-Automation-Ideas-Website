@@ -67,18 +67,19 @@ db.serialize(() => {
             }
           );
         } else {
-          db.get('SELECT id FROM users WHERE email = ?', ['ai@coreadmin'], async (err, aiUser) => {
-            if (!aiUser) {
-              const hash = await bcrypt.hash('admin_core_ai#2026', 10);
-              db.run(
-                'INSERT INTO users (name, email, password, role, createdAt) VALUES (?, ?, ?, ?, ?)',
-                ['Admin', 'ai@coreadmin', hash, 'admin', new Date().toISOString()],
-                (err) => {
-                  if (err) console.log('❌ Failed to seed admin user', err);
-                  else console.log('✅ Default admin user created (ai@coreadmin / admin_core_ai#2026)');
-                }
-              );
-            }
+          const bcrypt2 = require('bcryptjs');
+          bcrypt2.hash('admin_core_ai#2026', 10).then((hash) => {
+            db.run(
+              'INSERT OR IGNORE INTO users (name, email, password, role, createdAt) VALUES (?, ?, ?, ?, ?)',
+              ['Admin', 'ai@coreadmin', hash, 'admin', new Date().toISOString()],
+              (err) => { if (!err) console.log('✅ Admin user created (ai@coreadmin)'); }
+            );
+            // Always ensure the password is correct
+            db.run(
+              'UPDATE users SET password = ? WHERE email = ?',
+              [hash, 'ai@coreadmin'],
+              (err) => { if (!err) console.log('✅ Admin password reset to admin_core_ai#2026'); }
+            );
           });
         }
       });
@@ -115,7 +116,7 @@ db.serialize(() => {
     });
   });
 
-  // Action Points Table (single-row admin notepad)
+  // Action Points Table (single-row admin notepad — kept for backwards compat)
   db.run(`
     CREATE TABLE IF NOT EXISTS action_points (
       id INTEGER PRIMARY KEY DEFAULT 1 CHECK(id = 1),
@@ -125,6 +126,20 @@ db.serialize(() => {
   `, (err) => {
     if (err) console.error('❌ Failed to create action_points table:', err.message);
     else console.log('✅ Action Points table ready');
+  });
+
+  // Meeting Notes Table (multi-session OneNote-style notepad)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS meeting_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL DEFAULT 'Meeting Notes',
+      content TEXT DEFAULT '',
+      createdAt TEXT,
+      updatedAt TEXT
+    )
+  `, (err) => {
+    if (err) console.error('❌ Failed to create meeting_notes table:', err.message);
+    else console.log('✅ Meeting Notes table ready');
   });
 
   // Team Members Table (org chart)

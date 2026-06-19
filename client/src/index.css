@@ -137,6 +137,29 @@
   background: #C9091A;
 }
 
+/* Sleek Scrollbar for charts */
+.chart-scrollbar {
+  overflow-y: visible !important;
+}
+
+.chart-scrollbar::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.chart-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chart-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.18);
+  border-radius: 9999px;
+}
+
+.chart-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.35);
+}
+
 /* Red gradient text utility */
 .gradient-text {
   background: linear-gradient(135deg, #EB0A1E, #A80716);

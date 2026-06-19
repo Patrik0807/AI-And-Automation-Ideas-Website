@@ -9,6 +9,41 @@ const COLORS = ['#EB0A1E', '#1F2937', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'
 const BAR_SIZE = 50;
 const COLUMN_WIDTH = 80;
 
+const CustomizedCategoryTick = ({ x, y, payload }) => {
+  const value = String(payload?.value || '');
+  let lines = [value];
+
+  if (value.toLowerCase() === 'project engineering') {
+    lines = ['Project', 'engineering'];
+  } else if (value.toLowerCase() === 'sales engineering') {
+    lines = ['Sales', 'engineering'];
+  } else if (value.toLowerCase() === 'test and deployment') {
+    lines = ['Test and', 'Deployment'];
+  } else if (value.toLowerCase() === 'it delivery') {
+    lines = ['IT', 'Delivery'];
+  } else if (value.includes(' ') && value.length > 12) {
+    const idx = value.indexOf(' ');
+    lines = [value.substring(0, idx), value.substring(idx + 1)];
+  }
+
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor="middle"
+      fill="#64748b"
+      fontSize={11}
+      fontWeight={500}
+    >
+      {lines.map((line, i) => (
+        <tspan key={i} x={x} dy={i === 0 ? 14 : 14}>
+          {line}
+        </tspan>
+      ))}
+    </text>
+  );
+};
+
 export default function Insights() {
  const [stats, setStats] = useState(null);
  const [ideas, setIdeas] = useState([]);
@@ -89,8 +124,9 @@ export default function Insights() {
  }
 });
 
- const hoursChartWidth = Math.max(100, hoursSavedData.length * COLUMN_WIDTH);
- const costChartWidth = Math.max(100, costSavedData.length * COLUMN_WIDTH);
+  const hoursChartWidth = Math.max(100, hoursSavedData.length * COLUMN_WIDTH);
+  const costChartWidth = Math.max(100, costSavedData.length * COLUMN_WIDTH);
+  const categoryChartWidth = Math.max(300, categoryData.length * 100);
 
  return (
  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20">
@@ -152,32 +188,45 @@ export default function Insights() {
  <BarChart3 className="w-5 h-5 text-primary-500" />
  Category Overview
  </h3>
- <div className="h-[350px] w-full">
- <ResponsiveContainer width="100%" height="100%">
- <BarChart
- data={categoryData}
- barCategoryGap={24}
- barGap={8}
- >
- <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
- <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
- <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
- <Tooltip
- cursor={{ fill: '#f8fafc' }}
- contentStyle={{
- borderRadius: '16px',
- border: 'none',
- boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
- }}
- />
- <Bar dataKey="count" radius={[6, 6, 0, 0]} barSize={50}>
- {categoryData.map((entry, index) => (
- <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
- ))}
- </Bar>
- </BarChart>
- </ResponsiveContainer>
- </div>
+  <div className="h-[310px] w-full">
+    <div className="overflow-x-auto chart-scrollbar pb-1" style={{ height: '100%' }}>
+      <div style={{ width: `${categoryChartWidth}px`, minWidth: '100%', height: '100%' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={categoryData}
+            barCategoryGap={24}
+            barGap={8}
+            margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tickLine={false}
+              height={36}
+              interval={0}
+              padding={{ left: 40, right: 20 }}
+              tick={<CustomizedCategoryTick />}
+            />
+            <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+            <Tooltip
+              cursor={{ fill: '#f8fafc' }}
+              contentStyle={{
+                borderRadius: '16px',
+                border: 'none',
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+              }}
+            />
+            <Bar dataKey="count" radius={[6, 6, 0, 0]} barSize={50}>
+              {categoryData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
  </motion.div>
  </div>
 
@@ -212,27 +261,27 @@ export default function Insights() {
  </div>
  </div>
 
- <div className="lg:col-span-2 h-[400px] bg-slate-50 rounded-3xl p-6 border border-gray-100">
- <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full min-h-[350px]">
+  <div className="lg:col-span-2 h-[460px] bg-slate-50 rounded-3xl p-6 border border-gray-100">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full min-h-[380px]">
 
- {/* Hours Saved Chart */}
- <div className="bg-white rounded-2xl p-4 border border-gray-100 flex flex-col">
- <h4 className="text-sm font-bold text-slate-700 mb-2 flex items-center gap-2">
- Hours Saved per Project
- </h4>
+  {/* Hours Saved Chart */}
+  <div className="bg-white rounded-2xl p-4 border border-gray-100 flex flex-col">
+  <h4 className="text-sm font-bold text-slate-700 mb-2 flex items-center gap-2">
+  Hours Saved per Project
+  </h4>
 
- {hoursSavedData.length === 0 ? (
- <div className="flex-1 flex items-center justify-center text-sm font-medium text-slate-400">
- No project data available
- </div>
- ) : (
- <div className="flex-1 overflow-x-auto overflow-y-hidden" style={{ minHeight: '300px' }}>
- <div style={{ width: `${hoursChartWidth}px`, minWidth: '100%', height: '100%' }}>
- <ResponsiveContainer width="100%" height="100%">
- <BarChart
- data={hoursSavedData}
- margin={{ top: 10, right: 10, left: -20, bottom: 40 }}
- >
+  {hoursSavedData.length === 0 ? (
+  <div className="flex-1 flex items-center justify-center text-sm font-medium text-slate-400">
+  No project data available
+  </div>
+  ) : (
+  <div className="flex-1 overflow-x-auto overflow-y-hidden chart-scrollbar pb-3" style={{ minHeight: '300px' }}>
+  <div style={{ width: `${hoursChartWidth}px`, minWidth: '100%', height: '100%' }}>
+  <ResponsiveContainer width="100%" height="100%">
+  <BarChart
+  data={hoursSavedData}
+  margin={{ top: 10, right: 10, left: -10, bottom: 40 }}
+  >
  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
  <XAxis
  dataKey="name"
@@ -272,7 +321,7 @@ export default function Insights() {
  No project data available
  </div>
  ) : (
- <div className="flex-1 overflow-x-auto overflow-y-hidden" style={{ minHeight: '300px' }}>
+ <div className="flex-1 overflow-x-auto overflow-y-hidden chart-scrollbar pb-3" style={{ minHeight: '300px' }}>
  <div style={{ width: `${costChartWidth}px`, minWidth: '100%', height: '100%' }}>
  <ResponsiveContainer width="100%" height="100%">
  <BarChart

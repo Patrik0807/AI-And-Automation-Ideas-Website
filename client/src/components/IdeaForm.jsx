@@ -28,17 +28,17 @@ export default function IdeaForm({ isOpen, onClose, onCreated, initialData }) {
     hoursSaved: '',
     costSaved: '',
     submittedByEmail: '',
-    classification: 'Automation',
+    classification: 'AI',
     createdAt: new Date().toISOString().split('T')[0]
   });
 
   const { user } = useAuth();
-  
+
   // Images
   const [images, setImages] = useState([]);
   const [newImageFiles, setNewImageFiles] = useState([]);
   const [deletedImages, setDeletedImages] = useState([]);
-  
+
   // Solution Assets (Technical)
   const [artefacts, setArtefacts] = useState([]);
   const [newArtefactFiles, setNewArtefactFiles] = useState([]);
@@ -99,7 +99,7 @@ export default function IdeaForm({ isOpen, onClose, onCreated, initialData }) {
           hoursSaved: '',
           costSaved: '',
           submittedByEmail: user?.email || '',
-          classification: 'Automation',
+          classification: 'AI',
           createdAt: new Date().toISOString().split('T')[0]
         });
         setImages([]);
@@ -257,7 +257,7 @@ export default function IdeaForm({ isOpen, onClose, onCreated, initialData }) {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Category */}
                 <div>
@@ -272,7 +272,7 @@ export default function IdeaForm({ isOpen, onClose, onCreated, initialData }) {
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Classification <span className="text-red-500">*</span></label>
                   <div className="flex gap-2">
-                    {['Automation', 'AI'].map(type => (
+                    {['AI', 'Automation'].map(type => (
                       <button
                         key={type}
                         type="button"
@@ -342,20 +342,20 @@ export default function IdeaForm({ isOpen, onClose, onCreated, initialData }) {
                 </div>
                 {/* Legacy Images (if any) */}
                 {images.length > 0 && (
-                   <div className="grid grid-cols-4 gap-2 mt-3 mb-3">
-                     {images.map((src, i) => (
-                       <div key={i} className="relative aspect-video rounded-xl overflow-hidden border bg-white group/img">
-                         {isImage(src) ? (
-                           <img src={src} className="w-full h-full object-cover" />
-                         ) : (
-                           <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-400">
-                             <FileIcon className="w-6 h-6" />
-                           </div>
-                         )}
-                         <button type="button" onClick={() => removeImage(i)} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-lg opacity-0 group-hover/img:opacity-100 transition-opacity shadow-lg"><Trash2 className="w-3.5 h-3.5" /></button>
-                       </div>
-                     ))}
-                   </div>
+                  <div className="grid grid-cols-4 gap-2 mt-3 mb-3">
+                    {images.map((src, i) => (
+                      <div key={i} className="relative aspect-video rounded-xl overflow-hidden border bg-white group/img">
+                        {isImage(src) ? (
+                          <img src={src} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-400">
+                            <FileIcon className="w-6 h-6" />
+                          </div>
+                        )}
+                        <button type="button" onClick={() => removeImage(i)} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-lg opacity-0 group-hover/img:opacity-100 transition-opacity shadow-lg"><Trash2 className="w-3.5 h-3.5" /></button>
+                      </div>
+                    ))}
+                  </div>
                 )}
                 {/* New Documents Section */}
                 {documents.length > 0 && (
@@ -365,7 +365,7 @@ export default function IdeaForm({ isOpen, onClose, onCreated, initialData }) {
                         <div className="flex items-center gap-3 overflow-hidden">
                           {isImage(val) ? (
                             <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-200 shrink-0">
-                               <img src={val} className="w-full h-full object-cover" />
+                              <img src={val} className="w-full h-full object-cover" />
                             </div>
                           ) : (
                             <FileIcon className="w-5 h-5 text-primary-500 shrink-0" />
@@ -394,7 +394,7 @@ export default function IdeaForm({ isOpen, onClose, onCreated, initialData }) {
                         <div className="flex items-center gap-3 overflow-hidden">
                           {isImage(val) ? (
                             <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-200 shrink-0">
-                               <img src={val} className="w-full h-full object-cover" />
+                              <img src={val} className="w-full h-full object-cover" />
                             </div>
                           ) : (
                             <FileIcon className="w-5 h-5 text-indigo-500 shrink-0" />
